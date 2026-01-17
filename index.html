@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人介绍卡片生成器</title>
+    <!-- Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 左侧：输入表单区域 -->
+        <div class="form-section">
+            <h1><i class="fas fa-id-card"></i> 个人名片生成器</h1>
+            <p class="subtitle">填写信息，生成您的专属绿色清新名片</p>
+
+            <form id="cardForm">
+                <!-- 头像上传 -->
+                <div class="form-group">
+                    <label for="avatar"><i class="fas fa-camera"></i> 头像上传</label>
+                    <div class="avatar-upload">
+                        <input type="file" id="avatar" accept="image/*">
+                        <div class="avatar-preview" id="avatarPreview">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <span class="upload-hint">点击上传图片</span>
+                    </div>
+                </div>
+
+                <!-- 姓名 -->
+                <div class="form-group">
+                    <label for="name"><i class="fas fa-user"></i> 姓名 <span class="required">*</span></label>
+                    <input type="text" id="name" placeholder="请输入您的姓名" required>
+                </div>
+
+                <!-- 职位 -->
+                <div class="form-group">
+                    <label for="title"><i class="fas fa-briefcase"></i> 职位/头衔</label>
+                    <input type="text" id="title" placeholder="例如：产品经理">
+                </div>
+
+                <!-- 公司 -->
+                <div class="form-group">
+                    <label for="company"><i class="fas fa-building"></i> 公司</label>
+                    <input type="text" id="company" placeholder="例如：某某科技有限公司">
+                </div>
+
+                <!-- 个人简介 -->
+                <div class="form-group">
+                    <label for="bio"><i class="fas fa-quote-left"></i> 个人简介</label>
+                    <textarea id="bio" rows="4" placeholder="简单介绍一下自己..."></textarea>
+                    <span class="char-count" id="bioCount">0/100</span>
+                </div>
+
+                <!-- 邮箱 -->
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> 邮箱</label>
+                    <input type="email" id="email" placeholder="example@email.com">
+                </div>
+
+                <!-- 电话 -->
+                <div class="form-group">
+                    <label for="phone"><i class="fas fa-phone"></i> 电话</label>
+                    <input type="tel" id="phone" placeholder="138 0000 0000">
+                </div>
+
+                <!-- 按钮组 -->
+                <div class="button-group">
+                    <button type="button" class="btn btn-reset" id="resetBtn">
+                        <i class="fas fa-undo"></i> 重置
+                    </button>
+                    <button type="button" class="btn btn-download" id="downloadBtn">
+                        <i class="fas fa-download"></i> 下载名片
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 右侧：卡片预览区域 -->
+        <div class="preview-section">
+            <h2><i class="fas fa-eye"></i> 实时预览</h2>
+            <p class="subtitle">这是您的名片效果</p>
+
+            <!-- 卡片容器 -->
+            <div class="card-wrapper" id="cardWrapper">
+                <div class="card" id="card">
+                    <!-- 装饰背景 -->
+                    <div class="card-bg-decoration"></div>
+                    <div class="card-bg-circle"></div>
+
+                    <!-- 头像区域 -->
+                    <div class="card-avatar">
+                        <img id="cardAvatarImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%2381C784'/%3E%3Ctext x='50' y='65' font-size='40' text-anchor='middle' fill='white' font-family='Arial'%3E%3F%3C/text%3E%3C/svg%3E" alt="头像">
+                    </div>
+
+                    <!-- 信息区域 -->
+                    <div class="card-info">
+                        <h3 class="card-name" id="cardName">您的姓名</h3>
+                        <p class="card-title" id="cardTitle">职位/头衔</p>
+                        <p class="card-company" id="cardCompany">公司名称</p>
+
+                        <!-- 分割线 -->
+                        <div class="card-divider"></div>
+
+                        <!-- 简介 -->
+                        <p class="card-bio" id="cardBio">在这里填写您的个人简介，让大家更好地了解您...</p>
+
+                        <!-- 联系方式 -->
+                        <div class="card-contact">
+                            <div class="contact-item" id="emailItem">
+                                <i class="fas fa-envelope"></i>
+                                <span id="cardEmail">your@email.com</span>
+                            </div>
+                            <div class="contact-item" id="phoneItem">
+                                <i class="fas fa-phone"></i>
+                                <span id="cardPhone">138 0000 0000</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 二维码 -->
+                    <div class="card-qrcode" id="cardQrcode">
+                        <canvas id="qrcodeCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 提示信息 -->
+            <p class="preview-tip">
+                <i class="fas fa-info-circle"></i> 卡片尺寸：400 × 600 像素
+            </p>
+        </div>
+    </div>
+
+    <!-- 引入第三方库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- 主逻辑 -->
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
